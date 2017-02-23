@@ -7,11 +7,10 @@
 //
 
 #import "CFunction.h"
-#import <Foundation/Foundation.h>
 #import<libkern/OSAtomic.h>
 
 #pragma mark - private function
-dispatch_queue_t currentThreadQueue(){
+dispatch_queue_t currentThreadQueue(void){
     dispatch_queue_t currentThreadQueue;
     NSThread*currentThread = [NSThread currentThread];
     if (currentThread.isMainThread) {
@@ -85,15 +84,15 @@ void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void 
 
 
 
-static dispatch_queue_t doCodeDelay_Queue;
+static dispatch_queue_t kDoCodeDelay_Queue;
 void doCodeDelay(id obj, NSTimeInterval time,void (^doCode)(void)){
     BOOL binding = (obj != nil);
     __weak id wObj = obj;
     dispatch_queue_t doCode_Queue = currentThreadQueue();
-    if (!doCodeDelay_Queue) {
-        doCodeDelay_Queue = dispatch_queue_create("com.doCodeDelay.thread", DISPATCH_QUEUE_CONCURRENT);
+    if (!kDoCodeDelay_Queue) {
+        kDoCodeDelay_Queue = dispatch_queue_create("com.doCodeDelay.thread", DISPATCH_QUEUE_CONCURRENT);
     }
-    dispatch_async(doCodeDelay_Queue, ^{
+    dispatch_async(kDoCodeDelay_Queue, ^{
         [NSThread sleepForTimeInterval:time];
         dispatch_async(doCode_Queue, ^{
             if ((!binding || (binding && wObj)) && doCode) {
@@ -179,4 +178,21 @@ void timerCodePlus(id obj, int count, float interval, void (^doCode)(int dot , v
 }
 
 
+#import <sys/sysctl.h>
+#import <unistd.h>
+static bool kAppIsBeingTraced = false;
+bool appIsBeingTraced(void) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        struct kinfo_proc procInfo;
+        size_t structSize = sizeof(procInfo);
+        int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()};
+        if(sysctl(mib, sizeof(mib)/sizeof(*mib), &procInfo, &structSize, NULL, 0) != 0) {
+            kAppIsBeingTraced = false;
+        }else{
+            kAppIsBeingTraced = (procInfo.kp_proc.p_flag & P_TRACED) != 0;
+        }
+    });
+    return kAppIsBeingTraced;
+}
 

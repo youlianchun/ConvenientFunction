@@ -5,7 +5,7 @@
 //  Created by YLCHUN on 16/9/15.
 //  Copyright © 2016年 ylchun. All rights reserved.
 //
-
+#import <Foundation/Foundation.h>
 
 /*!
  *  主线程执行
@@ -13,7 +13,7 @@
  *  @param obj     绑定对象，nil为不绑定（绑定对象一旦释放将不执行代码块）
  *  @param ^doCode 代码块
  */
-void mainDo(id obj, void (^doCode)(void));
+FOUNDATION_EXPORT void mainDo(id obj, void (^doCode)(void));
 
 /*!
  *  子线程执行代码块
@@ -22,7 +22,7 @@ void mainDo(id obj, void (^doCode)(void));
  *  @param PRIORITY 优先级 2|高; 0|一般; －2|低;
  *  @param ^doCode  代码块
  */
-void globalDo(id obj, int PRIORITY, void (^doCode)(void));
+FOUNDATION_EXPORT void globalDo(id obj, int PRIORITY, void (^doCode)(void));
 
 /*!
  *  异常捕获
@@ -31,7 +31,7 @@ void globalDo(id obj, int PRIORITY, void (^doCode)(void));
  *  @param ^catchCode   异常捕获代码块，返回异常信息
  *  @param ^finallyCode 异常捕获完结束代码块
  */
-void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void (^finallyCode)(void));
+FOUNDATION_EXPORT void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void (^finallyCode)(void));
 
 /*!
  *  代码块延迟执行（代码块执行的所在线程类型取决于函数调用时的线程类型）
@@ -40,7 +40,7 @@ void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void 
  *  @param time    延迟时间（秒）
  *  @param ^doCode 延迟执行代码块
  */
-void doCodeDelay(id obj, double time,void (^doCode)(void));
+FOUNDATION_EXPORT void doCodeDelay(id obj, double time,void (^doCode)(void));
 
 /*!
  *  代码块执行耗时（秒）
@@ -49,7 +49,7 @@ void doCodeDelay(id obj, double time,void (^doCode)(void));
  *  @param ^end   代码开始到结束块耗时（不含代码块内block）
  *  @param ^dotDo 代码开始到块 dot("") 点耗时
  */
-void codeTime(void(^code)(void(^dot)(const char *tips)), void(^end)(double endTime), void(^dotDo)(const char *tips,double dotTime));
+FOUNDATION_EXPORT void codeTime(void(^code)(void(^dot)(const char *tips)), void(^end)(double endTime), void(^dotDo)(const char *tips,double dotTime));
 
 /*!
  *  计时器（代码块执行的所在线程类型取决于函数调用时的线程类型）
@@ -59,7 +59,7 @@ void codeTime(void(^code)(void(^dot)(const char *tips)), void(^end)(double endTi
  *  @param interval 时间间隔
  *  @param ^doCode  倒计时执行
  */
-void timerCode(id obj, int count, float interval, void (^doCode)(int dot));
+FOUNDATION_EXPORT void timerCode(id obj, int count, float interval, void (^doCode)(int dot));
 
 /*!
  *  计时器（代码块执行的所在线程类型取决于函数调用时的线程类型）
@@ -69,7 +69,14 @@ void timerCode(id obj, int count, float interval, void (^doCode)(int dot));
  *  @param interval 时间间隔
  *  @param ^doCode  实时计数，count>0 时为倒计时递减，count<=0 为0，inte(-1)|停止; inte(0)|暂停; inte(1)|恢复;
  */
-void timerCodePlus(id obj, int count, float interval, void (^doCode)(int dot, void(^inte)(int i)));
+FOUNDATION_EXPORT void timerCodePlus(id obj, int count, float interval, void (^doCode)(int dot, void(^inte)(int i)));
 
+
+/*!
+ *  App是否在跟踪模式下启动(代码调试模)
+ *
+ *  @return true 被跟踪
+ */
+FOUNDATION_EXPORT bool appIsBeingTraced(void);
 
 
