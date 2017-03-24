@@ -28,10 +28,9 @@ FOUNDATION_EXPORT void globalDo(id obj, int PRIORITY, void (^doCode)(void));
  *  异常捕获
  *
  *  @param ^tryCode     可能异常代码块
- *  @param ^catchCode   异常捕获代码块，返回异常信息
  *  @param ^finallyCode 异常捕获完结束代码块
  */
-FOUNDATION_EXPORT void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void (^finallyCode)(void));
+FOUNDATION_EXPORT void tryDo(void (^tryCode)(void),void (^finallyCode)(NSException *exception));
 
 /*!
  *  代码块延迟执行（代码块执行的所在线程类型取决于函数调用时的线程类型）
@@ -47,9 +46,9 @@ FOUNDATION_EXPORT void doCodeDelay(id obj, double time,void (^doCode)(void));
  *
  *  @param ^code  耗时计算代码块（代码块那诶有block时候，在block内打上 dot("") 可在dotDo返回耗时）
  *  @param ^end   代码开始到结束块耗时（不含代码块内block）
- *  @param ^dotDo 代码开始到块 dot("") 点耗时
+ *  @param ^dotDo 代码开始到块 dot(@"") 点耗时
  */
-FOUNDATION_EXPORT void codeTime(void(^code)(void(^dot)(const char *tips)), void(^end)(double endTime), void(^dotDo)(const char *tips,double dotTime));
+FOUNDATION_EXPORT void codeTime(void(^code)(void(^dot)(NSString *tips)), void(^end)(double endTime), void(^dotDo)(NSString *tips,double dotTime));
 
 /*!
  *  计时器（代码块执行的所在线程类型取决于函数调用时的线程类型）

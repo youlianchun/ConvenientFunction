@@ -43,7 +43,14 @@ void CLog(NSString *format, ...) {
         });
     }
     
-    
+    tryDo(^{
+        
+    }, ^(NSException *exception) {
+        if (exception) {
+            
+        }
+        
+    });
     
     doCodeDelay(self, 0.00001, ^{
         NSLog(@"11");

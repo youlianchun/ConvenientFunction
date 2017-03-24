@@ -63,20 +63,19 @@ void globalDo(id obj, int PRIORITY, void (^doCode)(void)){
     });
 };
 
-void tryDo(void (^tryCode)(void), void (^catchCode)(const char*exception), void (^finallyCode)(void)){
+void tryDo(void (^tryCode)(void),void (^finallyCode)(NSException*exception)){
     if (tryCode) {
         @try {
             tryCode();
         }
         @catch (NSException *exception) {
-            if (catchCode) {
-                const char* exceptionStr = [[NSString stringWithFormat:@"%@",exception] UTF8String];
-                catchCode(exceptionStr);
+            if (finallyCode) {
+                finallyCode(exception);
             }
         }
         @finally {
             if (finallyCode) {
-                finallyCode();
+                finallyCode(nil);
             }
         }
     }
@@ -102,10 +101,10 @@ void doCodeDelay(id obj, NSTimeInterval time,void (^doCode)(void)){
     });
 }
 
-void codeTime(void(^code)(void(^dot)(const char *tips)),void(^end)(double endTime),void(^dotDo)(const char *tips,double dotTime)){
+void codeTime(void(^code)(void(^dot)(NSString *tips)),void(^end)(double endTime),void(^dotDo)(NSString *tips,double dotTime)){
     if (code) {
         CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-        void(^dot)(const char *tips) = ^(const char *tips){
+        void(^dot)(NSString *tips) = ^(NSString *tips){
             CFAbsoluteTime dotTime = CFAbsoluteTimeGetCurrent()-startTime;;
             if (dotDo) {
                 dotDo(tips,dotTime);
